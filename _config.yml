@@ -20,7 +20,7 @@ author:
   pronouns         : # example: "she/her"  
   bio              : "Undergraduate in Mechatronics at Hanoi University of Science and Technology. Enthusiastic about Computer Vision"
   location         : "VietNam"
-  employer         : "Hanoi University of Science and Technology"
+  employer         : "Hanoi University of<br>Science and Technology"
   uri              : # URL
   email            : "none@example.org" 
 

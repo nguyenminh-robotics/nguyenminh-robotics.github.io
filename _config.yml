@@ -8,7 +8,7 @@ name                     : &name "Nguyễn Minh"
 description              : &description "Portfolio của Nguyễn Minh - Kỹ thuật Cơ điện tử" # Mô tả ngắn về trang
 url                      : https://nguyenminh-robotics.github.io #Tên đường link
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
-repository               : "MinhTienSinh/nguyenminh-robotics.github.io" # RẤT QUAN TRỌNG: [Tên tài khoản]/[Tên Repo]
+repository               : "nguyenminh-robotics/nguyenminh-robotics.github.io" # RẤT QUAN TRỌNG: [Tên tài khoản]/[Tên Repo]
 
 # Site Author - The following control what appear as part of the author content on the side bar.
 #               If a field is blank the icon and link will not appear, otherwise it will be shown.

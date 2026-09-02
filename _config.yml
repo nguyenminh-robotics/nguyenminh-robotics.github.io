@@ -2,9 +2,9 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
-title                    : "Trang cá nhân của Nguyễn Minh"
+title                    : "Nguyen Minh | Portfolio"
 title_separator          : "-"
-name                     : &name "Nguyễn Minh"
+name                     : &name "Nguyen Hong Minh"
 description              : &description "Portfolio của Nguyễn Minh - Kỹ thuật Cơ điện tử" # Mô tả ngắn về trang
 url                      : https://nguyenminh-robotics.github.io #Tên đường link
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
@@ -16,11 +16,11 @@ repository               : "nguyenminh-robotics/nguyenminh-robotics.github.io" #
 author:
   # Biographic information
   avatar           : "profile.png"
-  name             : "Your Sidebar Name"
+  name             : "Nguyen Hong Minh"
   pronouns         : # example: "she/her"  
-  bio              : "Short biography for the left-hand sidebar"
-  location         : "Earth"
-  employer         : "Red Brick University"
+  bio              : "Undergraduate in Mechatronics at Hanoi University of Science and Technology. Enthusiastic about Computer Vision"
+  location         : "VietNam"
+  employer         : "Hanoi University of Science and Technology"
   uri              : # URL
   email            : "none@example.org" 
 

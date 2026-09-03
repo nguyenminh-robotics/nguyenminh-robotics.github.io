@@ -4,66 +4,90 @@
 
 {% include comments-providers/scripts.html %}
 <script>
-  // 1. Từ điển dịch các cụm từ cố định trên website
   const translations = {
-    vi: {
-      "About": "Giới thiệu",
-      "Portfolio": "Dự án",
-      "Publications": "Công bố",
-      "CV": "Lý lịch",
-      "Blog": "Bài viết",
-      "Blog posts": "Danh mục bài viết",
-      "less than 1 minute read": "chưa đầy 1 phút đọc",
-      "Published:": "Đăng ngày:",
-      "VietNam": "Việt Nam",
-      "Hanoi University of Science and Technology": "Đại học Bách Khoa Hà Nội",
-      "Undergraduate in Mechatronics at Hanoi University of Science and Technology.": "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội."
-    },
-    en: {
-      "Giới thiệu": "About",
-      "Dự án": "Portfolio",
-      "Công bố": "Publications",
-      "Lý lịch": "CV",
-      "Bài viết": "Blog",
-      "Danh mục bài viết": "Blog posts",
-      "chưa đầy 1 phút đọc": "less than 1 minute read",
-      "Đăng ngày:": "Published:",
-      "Việt Nam": "VietNam",
-      "Đại học Bách Khoa Hà Nội": "Hanoi University of Science and Technology",
-      "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội.": "Undergraduate in Mechatronics at Hanoi University of Science and Technology."
-    }
+    // Menu & Thanh điều hướng
+    "About": "Giới thiệu",
+    "Portfolio": "Dự án",
+    "Publications": "Công bố",
+    "CV": "Lý lịch",
+    "Blog": "Bài viết",
+    
+    // Sidebar & Thông tin cá nhân
+    "Undergraduate in Mechatronics at Hanoi University of Science and Technology.": "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội.",
+    "VietNam": "Việt Nam",
+    "Hanoi University of Science and Technology": "Đại học Bách Khoa Hà Nội",
+    "Email": "Email",
+    "Google Scholar": "Google Scholar",
+    "ORCID": "ORCID",
+    "GitHub": "GitHub",
+
+    // Tiêu đề và Mục tiêu trên trang chủ
+    "Nguyen Hong Minh – Portfolio & Personal Website (Work in progress)": "Nguyễn Hồng Minh – Portfolio & Trang cá nhân",
+    "Goals": "Mục tiêu",
+    "This website is built to:": "Trang web này được xây dựng nhằm:",
+    "Introduce myself and my academic/research orientation": "Giới thiệu bản thân và định hướng học tập, nghiên cứu",
+    "Share my personal projects and research findings": "Chia sẻ các dự án cá nhân và kết quả nghiên cứu",
+    "Publish my CV and academic activities": "Công bố CV và các hoạt động học thuật",
+    "Write blogs about my learning experiences in engineering and robotics": "Viết blog chia sẻ kinh nghiệm tự học về kỹ thuật và robotics",
+    "Enhance my knowledge and technical skills in intelligent robotics, robot perception, and computer vision": "Nâng cao kiến thức và kỹ năng thực hành về robot thông minh, thị giác robot và máy tính",
+    "Participate in international research programs and co-author research publications": "Tham gia các lab nghiên cứu và hướng tới công bố bài báo khoa học",
+    "Prepare for fully funded graduate programs (Master’s/PhD) in Robotics and Autonomous Systems": "Chuẩn bị hồ sơ ứng tuyển học bổng toàn phần sau đại học (Thạc sĩ/Tiến sĩ) ngành Robotics và Hệ thống tự hành",
+    "Develop practical projects integrating both hardware and software": "Phát triển các dự án thực tế kết hợp giữa phần cứng và phần mềm",
+
+    // Trang Blog
+    "Blog posts": "Danh mục bài viết",
+    "less than 1 minute read": "chưa đầy 1 phút đọc",
+    "Published:": "Đăng ngày:"
   };
+
+  // Tạo từ điển ngược VI -> EN tự động
+  const reverseTranslations = {};
+  for (const [en, vi] of Object.entries(translations)) {
+    reverseTranslations[vi] = en;
+  }
 
   function applyLanguage(lang) {
     localStorage.setItem("user_lang", lang);
     document.documentElement.setAttribute("lang", lang);
 
-    // Cập nhật chữ hiển thị trên nút: Nếu đang xem tiếng Việt thì nút hiện chữ EN để bấm đổi lại
+    // Đổi nhãn nút: Đang ở VI thì hiện EN để bấm quay lại, và ngược lại
     const langBtn = document.getElementById("lang-toggle-btn");
     if (langBtn) {
-      langBtn.innerText = (lang === "vi") ? "EN" : "VI";
+      langBtn.textContent = (lang === "vi") ? "EN" : "VI";
     }
 
-    // Tự động quét và thay thế các từ ngữ có trong từ điển
-    const dict = translations[lang];
-    if (dict) {
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-      let node;
-      while (node = walker.nextNode()) {
-        const text = node.nodeValue.trim();
-        if (dict[text]) {
-          node.nodeValue = node.nodeValue.replace(text, dict[text]);
+    const dict = (lang === "vi") ? translations : reverseTranslations;
+
+    // Duyệt qua tất cả các text node trừ thẻ script và style
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: function(node) {
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          const tag = parent.tagName.toLowerCase();
+          if (tag === "script" || tag === "style" || parent.id === "lang-toggle-btn") {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
         }
+      },
+      false
+    );
+
+    let node;
+    while ((node = walker.nextNode())) {
+      const originalText = node.nodeValue;
+      const cleanText = originalText.trim();
+      if (dict[cleanText]) {
+        node.nodeValue = originalText.replace(cleanText, dict[cleanText]);
       }
     }
 
-    // Ẩn/Hiện nội dung dài theo thẻ data-lang (nếu có dùng trong bài viết)
+    // Toggle hiển thị thẻ data-lang (nếu có dùng trong bài viết)
     document.querySelectorAll("[data-lang]").forEach(el => {
-      if (el.getAttribute("data-lang") === lang) {
-        el.style.display = "";
-      } else {
-        el.style.display = "none";
-      }
+      el.style.display = (el.getAttribute("data-lang") === lang) ? "" : "none";
     });
   }
 
@@ -73,9 +97,9 @@
     applyLanguage(nextLang);
   }
 
-  // Tự động giữ nguyên ngôn ngữ đã chọn khi chuyển trang
+  // Tự động kiểm tra và áp dụng khi người đọc tải lại trang hoặc đổi bài viết
   document.addEventListener("DOMContentLoaded", () => {
-    const savedLang = localStorage.getItem("user_lang") || "en";
+    const savedLang = localStorage.getItem("user_lang");
     if (savedLang === "vi") {
       applyLanguage("vi");
     }

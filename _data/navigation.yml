@@ -7,18 +7,32 @@
 # NOTE that only one of the CV options should be selected, the first is for the
 #      Markdown formatted page while the second is generated using JSON.
 
+# Menu chính (Tiếng Anh)
 main:
   - title: "About"
     url: /
-
   - title: "Portfolio"
     url: /portfolio/
-
   - title: "Publications"
     url: /publications/
-
   - title: "CV"
     url: /cv/
-
   - title: "Blog"
     url: /year-archive/
+  - title: "VI"
+    url: /vi/
+
+# Menu Tiếng Việt
+main_vi:
+  - title: "Giới thiệu"
+    url: /vi/
+  - title: "Dự án"
+    url: /portfolio/
+  - title: "Công bố"
+    url: /publications/
+  - title: "CV"
+    url: /cv/
+  - title: "Bài viết"
+    url: /year-archive/
+  - title: "EN"
+    url: /

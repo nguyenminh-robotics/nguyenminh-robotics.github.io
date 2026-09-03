@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Nguyễn Hồng Minh – Portfolio & Personal Website (Work in progress)"
+title: "Nguyen Hong Minh – Portfolio & Personal Website (Work in progress)"
 author_profile: true
 redirect_from: 
   - /about/

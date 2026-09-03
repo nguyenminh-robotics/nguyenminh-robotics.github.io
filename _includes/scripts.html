@@ -3,3 +3,81 @@
 {% include analytics.html %}
 
 {% include comments-providers/scripts.html %}
+<script>
+  // 1. Từ điển dịch các cụm từ cố định trên website
+  const translations = {
+    vi: {
+      "About": "Giới thiệu",
+      "Portfolio": "Dự án",
+      "Publications": "Công bố",
+      "CV": "Lý lịch",
+      "Blog": "Bài viết",
+      "Blog posts": "Danh mục bài viết",
+      "less than 1 minute read": "chưa đầy 1 phút đọc",
+      "Published:": "Đăng ngày:",
+      "VietNam": "Việt Nam",
+      "Hanoi University of Science and Technology": "Đại học Bách Khoa Hà Nội",
+      "Undergraduate in Mechatronics at Hanoi University of Science and Technology.": "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội."
+    },
+    en: {
+      "Giới thiệu": "About",
+      "Dự án": "Portfolio",
+      "Công bố": "Publications",
+      "Lý lịch": "CV",
+      "Bài viết": "Blog",
+      "Danh mục bài viết": "Blog posts",
+      "chưa đầy 1 phút đọc": "less than 1 minute read",
+      "Đăng ngày:": "Published:",
+      "Việt Nam": "VietNam",
+      "Đại học Bách Khoa Hà Nội": "Hanoi University of Science and Technology",
+      "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội.": "Undergraduate in Mechatronics at Hanoi University of Science and Technology."
+    }
+  };
+
+  function applyLanguage(lang) {
+    localStorage.setItem("user_lang", lang);
+    document.documentElement.setAttribute("lang", lang);
+
+    // Cập nhật chữ hiển thị trên nút: Nếu đang xem tiếng Việt thì nút hiện chữ EN để bấm đổi lại
+    const langBtn = document.getElementById("lang-toggle-btn");
+    if (langBtn) {
+      langBtn.innerText = (lang === "vi") ? "EN" : "VI";
+    }
+
+    // Tự động quét và thay thế các từ ngữ có trong từ điển
+    const dict = translations[lang];
+    if (dict) {
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      while (node = walker.nextNode()) {
+        const text = node.nodeValue.trim();
+        if (dict[text]) {
+          node.nodeValue = node.nodeValue.replace(text, dict[text]);
+        }
+      }
+    }
+
+    // Ẩn/Hiện nội dung dài theo thẻ data-lang (nếu có dùng trong bài viết)
+    document.querySelectorAll("[data-lang]").forEach(el => {
+      if (el.getAttribute("data-lang") === lang) {
+        el.style.display = "";
+      } else {
+        el.style.display = "none";
+      }
+    });
+  }
+
+  function toggleLanguage() {
+    const currentLang = localStorage.getItem("user_lang") || "en";
+    const nextLang = (currentLang === "en") ? "vi" : "en";
+    applyLanguage(nextLang);
+  }
+
+  // Tự động giữ nguyên ngôn ngữ đã chọn khi chuyển trang
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedLang = localStorage.getItem("user_lang") || "en";
+    if (savedLang === "vi") {
+      applyLanguage("vi");
+    }
+  });
+</script>

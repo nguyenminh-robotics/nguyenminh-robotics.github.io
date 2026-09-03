@@ -18,12 +18,56 @@
               <a href="{{ domain }}{{ link.url }}">{{ link.title }}</a>
             </li>
           {% endfor %}
-          <li class="masthead__menu-item persist tail">
-            <a href="#" id="lang-toggle-btn" style="font-weight: bold; cursor: pointer; user-select: none;">VI</a>
+         <li class="masthead__menu-item persist tail">
+            <button id="lang-toggle-btn" onclick="toggleLanguageManual()" style="background: none; border: none; font-weight: bold; cursor: pointer; color: inherit; font-size: inherit; padding: 0 5px;">VI</button>
           </li>
           <li id="theme-toggle" class="masthead__menu-item persist tail">
             <a role="button" aria-labelledby="theme-icon"><i id="theme-icon" class="fa-solid fa-sun" aria-hidden="true" title="toggle theme"></i></a>
           </li>
+
+          <script>
+            const dict = {
+              "About": "Giới thiệu",
+              "Portfolio": "Dự án",
+              "Publications": "Công bố",
+              "CV": "Lý lịch",
+              "Blog": "Bài viết",
+              "VietNam": "Việt Nam",
+              "Hanoi University of Science and Technology": "Đại học Bách Khoa Hà Nội",
+              "Undergraduate in Mechatronics at Hanoi University of Science and Technology.": "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội."
+            };
+
+            const revDict = {};
+            for (let k in dict) revDict[dict[k]] = k;
+
+            function runTranslate(targetLang) {
+              localStorage.setItem("user_site_lang", targetLang);
+              const btn = document.getElementById("lang-toggle-btn");
+              if (btn) btn.textContent = (targetLang === "vi") ? "EN" : "VI";
+
+              const currentMap = (targetLang === "vi") ? dict : revDict;
+
+              // Dịch các nút menu và văn bản
+              document.querySelectorAll(".masthead__menu-item a, .author__bio, .author__urls li").forEach(el => {
+                const txt = el.textContent.trim();
+                if (currentMap[txt]) {
+                  el.textContent = currentMap[txt];
+                }
+              });
+            }
+
+            function toggleLanguageManual() {
+              const current = localStorage.getItem("user_site_lang") || "en";
+              const next = (current === "en") ? "vi" : "en";
+              runTranslate(next);
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+              if (localStorage.getItem("user_site_lang") === "vi") {
+                runTranslate("vi");
+              }
+            });
+          </script>
         </ul>
         <ul class="hidden-links hidden"></ul>
       </nav>

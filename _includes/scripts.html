@@ -91,11 +91,11 @@
     });
   }
 
-  function toggleLanguage() {
+  window.toggleLanguage = function toggleLanguage() {
     const currentLang = localStorage.getItem("user_lang") || "en";
     const nextLang = (currentLang === "en") ? "vi" : "en";
     applyLanguage(nextLang);
-  }
+  };
 
   // Tự động kiểm tra và áp dụng khi người đọc tải lại trang hoặc đổi bài viết
   document.addEventListener("DOMContentLoaded", () => {

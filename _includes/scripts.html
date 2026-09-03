@@ -4,104 +4,84 @@
 
 {% include comments-providers/scripts.html %}
 <script>
-  const translations = {
-    // Menu & Thanh điều hướng
+(function() {
+  const dictionary = {
+    // Menu
     "About": "Giới thiệu",
     "Portfolio": "Dự án",
     "Publications": "Công bố",
     "CV": "Lý lịch",
     "Blog": "Bài viết",
     
-    // Sidebar & Thông tin cá nhân
+    // Sidebar
     "Undergraduate in Mechatronics at Hanoi University of Science and Technology.": "Sinh viên ngành Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội.",
     "VietNam": "Việt Nam",
     "Hanoi University of Science and Technology": "Đại học Bách Khoa Hà Nội",
-    "Email": "Email",
-    "Google Scholar": "Google Scholar",
-    "ORCID": "ORCID",
-    "GitHub": "GitHub",
-
-    // Tiêu đề và Mục tiêu trên trang chủ
-    "Nguyen Hong Minh – Portfolio & Personal Website (Work in progress)": "Nguyễn Hồng Minh – Portfolio & Trang cá nhân",
+    
+    // Trang chủ
     "Goals": "Mục tiêu",
     "This website is built to:": "Trang web này được xây dựng nhằm:",
     "Introduce myself and my academic/research orientation": "Giới thiệu bản thân và định hướng học tập, nghiên cứu",
     "Share my personal projects and research findings": "Chia sẻ các dự án cá nhân và kết quả nghiên cứu",
     "Publish my CV and academic activities": "Công bố CV và các hoạt động học thuật",
-    "Write blogs about my learning experiences in engineering and robotics": "Viết blog chia sẻ kinh nghiệm tự học về kỹ thuật và robotics",
-    "Enhance my knowledge and technical skills in intelligent robotics, robot perception, and computer vision": "Nâng cao kiến thức và kỹ năng thực hành về robot thông minh, thị giác robot và máy tính",
-    "Participate in international research programs and co-author research publications": "Tham gia các lab nghiên cứu và hướng tới công bố bài báo khoa học",
-    "Prepare for fully funded graduate programs (Master’s/PhD) in Robotics and Autonomous Systems": "Chuẩn bị hồ sơ ứng tuyển học bổng toàn phần sau đại học (Thạc sĩ/Tiến sĩ) ngành Robotics và Hệ thống tự hành",
-    "Develop practical projects integrating both hardware and software": "Phát triển các dự án thực tế kết hợp giữa phần cứng và phần mềm",
-
-    // Trang Blog
-    "Blog posts": "Danh mục bài viết",
-    "less than 1 minute read": "chưa đầy 1 phút đọc",
-    "Published:": "Đăng ngày:"
+    "Write blogs about my learning experiences in engineering and robotics": "Viết blog chia sẻ kinh nghiệm tự học về kỹ thuật và robotics"
   };
 
-  // Tạo từ điển ngược VI -> EN tự động
-  const reverseTranslations = {};
-  for (const [en, vi] of Object.entries(translations)) {
-    reverseTranslations[vi] = en;
+  // Tạo map ngược
+  const revDict = {};
+  for (let k in dictionary) {
+    revDict[dictionary[k]] = k;
   }
 
-  function applyLanguage(lang) {
-    localStorage.setItem("user_lang", lang);
-    document.documentElement.setAttribute("lang", lang);
-
-    // Đổi nhãn nút: Đang ở VI thì hiện EN để bấm quay lại, và ngược lại
-    const langBtn = document.getElementById("lang-toggle-btn");
-    if (langBtn) {
-      langBtn.textContent = (lang === "vi") ? "EN" : "VI";
+  function translatePage(targetLang) {
+    localStorage.setItem("user_lang", targetLang);
+    const btn = document.getElementById("lang-toggle-btn");
+    if (btn) {
+      btn.textContent = (targetLang === "vi") ? "EN" : "VI";
     }
 
-    const dict = (lang === "vi") ? translations : reverseTranslations;
+    const dict = (targetLang === "vi") ? dictionary : revDict;
 
-    // Duyệt qua tất cả các text node trừ thẻ script và style
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: function(node) {
-          const parent = node.parentElement;
-          if (!parent) return NodeFilter.FILTER_REJECT;
-          const tag = parent.tagName.toLowerCase();
-          if (tag === "script" || tag === "style" || parent.id === "lang-toggle-btn") {
-            return NodeFilter.FILTER_REJECT;
-          }
-          return NodeFilter.FILTER_ACCEPT;
+    // Quét và thay thế tất cả các phần tử chứa text
+    const elements = document.querySelectorAll("h1, h2, h3, h4, p, li, a, span");
+    elements.forEach(el => {
+      // Chỉ thay thế text nếu là thẻ đơn, tránh ghi đè mất thẻ con bên trong
+      if (el.children.length === 0) {
+        const txt = el.textContent.trim();
+        if (dict[txt]) {
+          el.textContent = dict[txt];
         }
-      },
-      false
-    );
-
-    let node;
-    while ((node = walker.nextNode())) {
-      const originalText = node.nodeValue;
-      const cleanText = originalText.trim();
-      if (dict[cleanText]) {
-        node.nodeValue = originalText.replace(cleanText, dict[cleanText]);
       }
-    }
+    });
 
-    // Toggle hiển thị thẻ data-lang (nếu có dùng trong bài viết)
+    // Xử lý các khối nội dung dài có gắn data-lang (nếu có)
     document.querySelectorAll("[data-lang]").forEach(el => {
-      el.style.display = (el.getAttribute("data-lang") === lang) ? "" : "none";
+      el.style.display = (el.getAttribute("data-lang") === targetLang) ? "" : "none";
     });
   }
 
-  window.toggleLanguage = function toggleLanguage() {
-    const currentLang = localStorage.getItem("user_lang") || "en";
-    const nextLang = (currentLang === "en") ? "vi" : "en";
-    applyLanguage(nextLang);
-  };
-
-  // Tự động kiểm tra và áp dụng khi người đọc tải lại trang hoặc đổi bài viết
-  document.addEventListener("DOMContentLoaded", () => {
-    const savedLang = localStorage.getItem("user_lang");
-    if (savedLang === "vi") {
-      applyLanguage("vi");
+  function initLang() {
+    const btn = document.getElementById("lang-toggle-btn");
+    if (btn) {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        const currentLang = localStorage.getItem("user_lang") || "en";
+        const nextLang = (currentLang === "en") ? "vi" : "en";
+        translatePage(nextLang);
+      });
     }
-  });
+
+    // Giữ trạng thái khi refresh hoặc sang trang khác
+    const saved = localStorage.getItem("user_lang");
+    if (saved === "vi") {
+      translatePage("vi");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLang);
+  } else {
+    initLang();
+  }
+})();
 </script>
